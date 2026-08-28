@@ -18,7 +18,7 @@ public class JDM {
         } else if (args.length == 1) {
             runFile(args[0]);
         } else {
-            //
+            runPrompt();
         }
     }
 
