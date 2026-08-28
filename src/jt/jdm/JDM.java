@@ -37,7 +37,12 @@ public class JDM {
         }
     }
 
-    private static void run(String source) {
-        //
+    private static void run(String source) { // currently not impl
+        Scanner scanner = new Scanner(source);
+        List<Token> tokens = scanner.scanTokens();
+
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
     }
 }
