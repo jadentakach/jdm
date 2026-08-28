@@ -14,9 +14,14 @@ public class JDM {
             System.out.println("Usage: jdm [script]");
             System.exit(24);
         } else if (args.length == 1) {
-            //
+            runFile(args[0]);
         } else {
             //
         }
+    }
+
+    public static void runFile(String path) throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(path));
+        //
     }
 }
