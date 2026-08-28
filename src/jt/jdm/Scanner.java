@@ -45,6 +45,7 @@ public class Scanner {
             case '+': addToken(PLUS); break;
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(ASTERISK); break;
+
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
                 break;
@@ -65,10 +66,55 @@ public class Scanner {
                 }
                 break;
             
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            
+            case '\n':
+                line++;
+                break;
+
+            case '"': string(); break;
+            
             default:
-                JDM.error(line, "unexpected character");
+                if (isDigit(c)) {
+                    number()
+                } else {
+                    JDM.error(line, "unexpected character");
+                }
+
                 break;
         }
+    }
+
+    private void number() {
+        while (isDigit(peek())) advance();
+
+        if (peek() == '.' && isDigit(peekNext())) {
+            advance();
+
+            while (isDigit(peek())) advance();
+        }
+
+        addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+    }
+
+    private void string() {
+        while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '\n') line++;
+            advance();
+        }
+
+        if (isAtEnd()) {
+            JDM.error(line, "unterminated string");
+            return;
+        }
+
+        advance();
+
+        String value = source.substring(start + 1, current - 1);
+        addToken(STRING, value);
     }
 
     private boolean match(char expected) {
@@ -82,6 +128,15 @@ public class Scanner {
     private char peek() {
         if (isAtEnd()) return '\0';
         return source.charAt(current);
+    }
+
+    private char peekNext() {
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current  +1);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     public char advance() {
