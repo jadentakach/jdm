@@ -29,12 +29,23 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
 
-    @Override Void visitVarStmt(Stmt.Var stmt) {
+    @Override 
+    public Void visitVarStmt(Stmt.Var stmt) {
         declare(stmt.name);
         if (stmt.initializer != null) {
             resolve(stmt.initializer);
         }
         define(stmt.name);
+        return null;
+    }
+
+    @Override
+    public Void visitVariableExpr(Expr.Variable expr) {
+        if (!scopes.isEmpty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE) {
+            JDM.error(expr.name, "can't read local variable in its own initializer");
+        }
+
+        resolveLocal(expr, expr.name);
         return null;
     }
 
@@ -60,5 +71,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private void define(Token name) {
         if (scopes.isEmpty()) return;
         scopes.peek().put(name.lexeme, true);
+    }
+
+    private void resolveLocal(Expr expr, Token name) {
+        for (int i = scopes.size() - 1; i >= 0; i--) {
+            if (scopes.get(i).containsKey(name.lexeme)) {
+                interpreter.resolve(expr, scopes.size() - 1 - i);
+                return;
+            }
+        }
     }
 }
