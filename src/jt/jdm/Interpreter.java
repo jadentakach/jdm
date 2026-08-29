@@ -6,7 +6,8 @@ import java.util.List;
 import jt.jdm.TokenType.*;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment environment = new Environment();
+    final Environment globals = new Environment()
+    private Environment environment = globals;
 
     void interpret(List<Stmt> expression) {
         try {
@@ -14,6 +15,21 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         } catch (RuntimeError error) {
             JDM.runtimeError(error);
         }
+    }
+
+    Interpreter() {
+        globals.define("clock", new JDMCallable() {
+            @Override
+            public int arity() { return 0; }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                return (double)System.currentTimeMillis() / 1000.0;
+            }
+
+            @Override
+            public String toString() { return "<native fn>"; }
+        });
     }
 
     @Override
