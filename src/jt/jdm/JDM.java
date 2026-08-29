@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class JDM {
+    private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
 
@@ -51,7 +52,7 @@ public class JDM {
 
         if (hadError) return;
 
-        System.out.println(new AstPrinter().print(expression));
+        interpreter.interpret(expression);
     }
 
     static void error(int line, String message) {
