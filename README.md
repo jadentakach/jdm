@@ -1,0 +1,1 @@
+next step @ https://craftinginterpreters.com/classes.html#class-declarations

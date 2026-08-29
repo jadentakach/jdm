@@ -44,7 +44,7 @@ public class JDM {
         }
     }
 
-    private static void run(String source) { // currently not impl
+    private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
